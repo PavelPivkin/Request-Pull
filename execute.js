@@ -9,24 +9,23 @@ function promisify(process) {
 }
 
 function execute(processes, coroutinesCount) {
-    let promises = processes.map((process, index) => promisify(process, index));
     let i = 0;
 
     while(i < coroutinesCount) {
-        next();
+        next(i);
     }
 
-    function next() {
-        promises[i++].then(result => {
-            console.log(result);
-            if (i < promises.length) next();
+    function next(coroutineIndex = 0, time = 0) {
+        promisify(processes[i++]).then(result => {
+            console.log(`${result} in coroutine ${coroutineIndex}`);
+            if (i < processes.length) next(coroutineIndex);
         });
     }
 
 }
 
 function main() {
-    const PROCESSES_NUM = 3;
+    const PROCESSES_NUM = 10;
     const MAX_TIMEOUT = 5;
     const COROUTINES_NUM = 2;
 
